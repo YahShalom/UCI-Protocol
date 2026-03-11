@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceChain",
+  "type": "object",
+  "required": ["chain_id", "intent_request", "steps"],
+  "properties": {
+    "chain_id": { "type": "string" },
+    "evidence_step_id": { "type": "string" },
+    "intent_request": { "$ref": "./intent-request.schema.json" },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "./evidence-step.schema.json" }
+    }
+  }
+}

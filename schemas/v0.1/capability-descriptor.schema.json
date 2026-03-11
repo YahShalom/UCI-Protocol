@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CapabilityDescriptor",
+  "type": "object",
+  "required": ["spec_version", "capability_id", "namespace", "publisher", "description", "inputs_schema", "outputs_schema"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "capability_id": { "type": "string" },
+    "namespace": { "type": "string" },
+    "publisher": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "org_id": { "type": "string" },
+        "origin": { "type": "string" }
+      }
+    },
+    "description": { "type": "string" },
+    "inputs_schema": { "type": "object", "additionalProperties": true },
+    "outputs_schema": { "type": "object", "additionalProperties": true },
+    "trust": { "$ref": "./capability-trust-profile.schema.json" },
+    "bridge_metadata": { "type": "object", "additionalProperties": true }
+  }
+}

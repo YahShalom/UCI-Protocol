@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CapabilityTrustProfile",
+  "type": "object",
+  "properties": {
+    "verification_status": { "type": "string", "enum": ["unverified", "verified", "official", "manual"] },
+    "verification_method": { "type": "string", "enum": ["manual", "domain_verification", "cryptographic"] },
+    "publisher_signature": { "type": "string" },
+    "evidence_profile": { "type": "string" }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExecutionPlan",
+  "type": "object",
+  "required": ["plan_id", "steps"],
+  "properties": {
+    "plan_id": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "capability", "inputs"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "capability": { "type": "string" },
+          "inputs": { "type": "object", "additionalProperties": true },
+          "execution_mode": { "type": "string", "enum": ["local", "remote"] },
+          "remote_node_url": { "type": "string" }
+        }
+      }
+    }
+  }
+}

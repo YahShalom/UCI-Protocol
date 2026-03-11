@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UCI PolicyEnvelope",
+  "description": "A container for policy constraints and execution requirements related to an intent.",
+  "type": "object",
+  "required": [
+    "policy_envelope_id",
+    "intent_id",
+    "signed_by",
+    "constraints",
+    "delegation",
+    "execution_requirements"
+  ],
+  "properties": {
+    "policy_envelope_id": {
+      "type": "string",
+      "description": "The unique identifier for this policy envelope."
+    },
+    "intent_id": {
+      "type": "string",
+      "description": "The ID of the intent this policy envelope applies to."
+    },
+    "signed_by": {
+      "type": "object",
+      "required": ["actor_id", "key_id"],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "description": "The ID of the actor signing the envelope."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "The ID of the key used for signing."
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "max_cost_usd": {
+          "type": "number",
+          "description": "The maximum allowed cost for the execution in USD."
+        },
+        "risk_class": {
+          "type": "string",
+          "description": "A classification of the risk associated with the intent."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "The legal or operational jurisdiction under which the execution must run."
+        },
+        "requires_evidence": {
+          "type": "boolean",
+          "description": "Whether an evidence chain is required for this execution."
+        }
+      }
+    },
+    "delegation": {
+      "type": "object",
+      "required": ["allowed"],
+      "properties": {
+        "allowed": {
+          "type": "boolean",
+          "description": "Whether the execution can be delegated to other actors."
+        },
+        "max_depth": {
+          "type": "number",
+          "description": "The maximum delegation depth."
+        }
+      }
+    },
+    "execution_requirements": {
+      "type": "object",
+      "properties": {
+        "allowed_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of capabilities that are allowed to be used."
+        },
+        "required_evidence_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The kinds of evidence that must be recorded."
+        }
+      }
+    },
+    "signature": {
+      "type": "string",
+      "description": "The digital signature of the envelope."
+    }
+  }
+}

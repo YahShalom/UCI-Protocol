@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReplayResult",
+  "type": "object",
+  "required": ["run_id", "replay_status", "steps_replayed", "mismatches"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "replay_status": { "type": "string", "enum": ["MATCH", "MISMATCH", "ERROR"] },
+    "steps_replayed": { "type": "integer" },
+    "mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "expected", "actual"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "expected": { "type": "object", "additionalProperties": true },
+          "actual": { "type": "object", "additionalProperties": true }
+        }
+      }
+    }
+  }
+}

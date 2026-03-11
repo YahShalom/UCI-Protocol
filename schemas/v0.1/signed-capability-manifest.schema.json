@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SignedCapabilityManifest",
+  "type": "object",
+  "required": ["payload", "signatures"],
+  "properties": {
+    "payload": { "type": "string" },
+    "signatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["protected", "signature"],
+        "properties": {
+          "protected": { "type": "string" },
+          "signature": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceStep",
+  "type": "object",
+  "required": ["evidence_step_id", "parent_step_ids", "timestamp", "type", "capability_id", "input", "output", "parameters"],
+  "properties": {
+    "evidence_step_id": { "type": "string" },
+    "parent_step_ids": { "type": "array", "items": { "type": "string" } },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "type": { "type": "string" },
+    "capability_id": { "type": "string" },
+    "input": { "type": "string" },
+    "output": { "type": "string" },
+    "parameters": { "type": "object", "additionalProperties": true },
+    "node_id": { "type": "string" },
+    "signature": { "type": "string" }
+  }
+}

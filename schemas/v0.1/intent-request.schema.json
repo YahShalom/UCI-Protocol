@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IntentRequest",
+  "type": "object",
+  "required": ["capability_id", "parameters"],
+  "properties": {
+    "request_id": { "type": "string" },
+    "capability_id": { "type": "string" },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "policy": { "$ref": "./policy-envelope.schema.json" }
+  }
+}

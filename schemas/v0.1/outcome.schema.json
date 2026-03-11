@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Outcome",
+  "type": "object",
+  "required": ["outcome_id", "status"],
+  "properties": {
+    "outcome_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["SUCCESS", "ERROR", "DENIED"] },
+    "result": {},
+    "error": { "type": "string" }
+  }
+}
