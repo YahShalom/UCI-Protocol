@@ -41,7 +41,7 @@ export function evaluateCapabilityTrust(trust: CapabilityTrustProfile): "trusted
 
 export function verifyManifest(manifest: SignedCapabilityManifest, trustProfile?: CapabilityTrustProfile): CapabilityManifest {
   const payload = JSON.parse(Buffer.from(manifest.payload, "base64url").toString("utf8")) as CapabilityManifest;
-  const header = decodeProtectedHeader(manifest);
+  const header = decodeProtectedHeader( manifest );
   const signature = manifest.signatures[0]?.signature;
   const trustedPublisher = verifyCapabilityPublisher(payload.publisher.id, header.key_id);
   const effectiveTrust = trustProfile ?? payload.trust ?? {};
@@ -69,4 +69,19 @@ export function verifyManifest(manifest: SignedCapabilityManifest, trustProfile?
   };
 
   return payload;
+}
+
+export function signManifest(manifest: CapabilityManifest, signingKey: any): SignedCapabilityManifest {
+  const payload = Buffer.from(JSON.stringify(manifest)).toString('base64url');
+  const signature = nacl.sign.detached(Buffer.from(payload, 'base64url'), signingKey.secretKey);
+  
+  return {
+    payload,
+    signatures: [
+      {
+        protected: Buffer.from(JSON.stringify({ alg: 'EdDSA', key_id: signingKey.key_id })).toString('base64url'),
+        signature: Buffer.from(signature).toString('base64url'),
+      },
+    ],
+  };
 }

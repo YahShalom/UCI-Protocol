@@ -30,7 +30,7 @@ export default function Home() {
 
       if (!res.ok) {
         const errorText = await res.text();
-        let errorJson = {};
+        let errorJson: any = {};
         try {
           errorJson = JSON.parse(errorText);
         } catch(e) {}

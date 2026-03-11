@@ -173,3 +173,17 @@ export interface AdapterResult {
   capability: CapabilityDescriptor;
   source: string;
 }
+
+export interface RemoteNodeDescriptor {
+    node_id: string;
+    node_url: string;
+    description: string;
+    capabilities: RemoteCapabilityDescriptor[];
+    protocol: string;
+    version: string;
+    discovery_url: string;
+    capabilities_endpoint: string;
+    execute_endpoint: string;
+    resolve_endpoint: string;
+    registry_endpoint: string;
+}

@@ -5,7 +5,8 @@ import { capability as fileWrite } from "../capabilities/file-write";
 import { capability as fileDelete } from "../capabilities/file-delete";
 import { capability as directoryList } from "../capabilities/directory-list";
 import { CapabilityDescriptor, SignedCapabilityManifest } from "./types";
-import { signManifestPayload } from "./trust";
+import { signManifest } from "./trust";
+import nacl from "tweetnacl";
 
 const capabilities: CapabilityDescriptor[] = [
   helloWorld,
@@ -16,32 +17,10 @@ const capabilities: CapabilityDescriptor[] = [
   directoryList,
 ];
 
+const signingKey = nacl.sign.keyPair();
+
 function toManifest(capability: CapabilityDescriptor): SignedCapabilityManifest {
-  const payload = Buffer.from(
-    JSON.stringify({
-      spec_version: capability.spec_version,
-      capability_id: capability.capability_id,
-      namespace: capability.namespace,
-      publisher: capability.publisher,
-      description: capability.description,
-      inputs_schema: capability.inputs_schema,
-      outputs_schema: capability.outputs_schema,
-      trust: capability.trust,
-    }),
-    "utf8"
-  ).toString("base64url");
-
-  const key_id = capability.publisher.id === "did:web:uci.local" ? "uci-local-key-1" : "unknown-key";
-
-  return {
-    payload,
-    signatures: [
-      {
-        protected: Buffer.from(JSON.stringify({ alg: "mock-sha256", typ: "JWS", key_id }), "utf8").toString("base64url"),
-        signature: signManifestPayload(payload, key_id),
-      },
-    ],
-  };
+  return signManifest(capability, { secretKey: signingKey.secretKey, key_id: 'uci-local-key-1' });
 }
 
 export function listSignedCapabilityManifests(): SignedCapabilityManifest[] {

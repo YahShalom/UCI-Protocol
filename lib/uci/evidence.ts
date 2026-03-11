@@ -37,3 +37,5 @@ export function appendEvidenceStep(chain: EvidenceChain, step: EvidenceStep): Ev
   chain.steps.push(step);
   return chain;
 }
+
+export type { EvidenceChain, EvidenceStep };

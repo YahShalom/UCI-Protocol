@@ -1,11 +1,13 @@
 import { CapabilityDescriptor, CapabilityTrustProfile, EvidenceChain, IntentRequest, Outcome, PolicyDecision } from "../types";
 import { checkPolicy } from "../policy";
-import { verifyManifest, signEvidenceStep } from "./crypto";
+import { verifyManifest, signEvidenceStep, generateKeyPair } from "./crypto";
 import { LocalRegistry } from "./registry";
 import { CapabilityRegistry, ExecutionResult, UCIKernel } from "./types";
 import { createEvidenceChain, createEvidenceStep, appendEvidenceStep } from "../evidence";
 import { resolveIntent } from "../resolver";
-import { storeEvidenceChain } from "../replay";
+import { storeEvidenceChain } from "../store";
+import nacl from "tweetnacl";
+import { Buffer } from "buffer";
 
 const DEFAULT_TRUST_PROFILE: CapabilityTrustProfile = {
   verification_status: "verified",
@@ -21,7 +23,11 @@ const DEFAULT_TRUST_PROFILE: CapabilityTrustProfile = {
   ],
 };
 
-const DEFAULT_SIGNING_KEY = { kty: "OKP", crv: "Ed25519", x: "uci-local-public-key", d: "uci-local-private-key" };
+const keyPair = nacl.sign.keyPair();
+const publicKey = Buffer.from(keyPair.publicKey).toString("base64url");
+const privateKey = Buffer.from(keyPair.secretKey).toString("base64url");
+
+const DEFAULT_SIGNING_KEY = { kty: "OKP", crv: "Ed25519", x: publicKey, d: privateKey };
 
 export class UCIKernelImpl implements UCIKernel {
   private readonly registry: CapabilityRegistry;
@@ -152,7 +158,13 @@ export class UCIKernelImpl implements UCIKernel {
   }
 
   private enforcePolicy(capability: CapabilityDescriptor, intent: IntentRequest): PolicyDecision {
-    return checkPolicy(capability, intent, intent.policy) ?? {
+    if (!intent.policy) {
+      return {
+        decision: "ALLOW",
+        reason: "No policy specified.",
+      };
+    }
+    return checkPolicy(intent, intent.policy) ?? {
       decision: "ALLOW",
       reason: "No applicable policy.",
     };

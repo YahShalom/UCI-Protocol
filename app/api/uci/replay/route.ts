@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { replayRun } from '@/lib/uci/replay';
+import { replayEvidenceChain } from '@/lib/uci/replay';
+import { getEvidenceChain } from '@/lib/uci/store';
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +11,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'evidence_chain_id is required' }, { status: 400 });
     }
 
-    const result = await replayRun(evidence_chain_id);
+    const chain = await getEvidenceChain(evidence_chain_id);
+    if (!chain) {
+      return NextResponse.json({ error: 'Evidence chain not found' }, { status: 404 });
+    }
+
+    const result = await replayEvidenceChain(chain);
     return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unknown error occurred';

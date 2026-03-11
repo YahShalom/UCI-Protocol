@@ -31,6 +31,10 @@ export async function fetchRemoteDiscoveryDocument(
   const discoveryDocument = await response.json();
 
   return {
+    node_id: "unknown",
+    node_url: "unknown",
+    description: "unknown",
+    capabilities: [],
     protocol: discoveryDocument.protocol,
     version: discoveryDocument.version,
     discovery_url: discoveryDocument.discovery_url,

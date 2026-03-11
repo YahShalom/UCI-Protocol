@@ -33,7 +33,7 @@ export async function signManifest(manifest: CapabilityManifest, privateKey: { d
   const payload = Buffer.from(JSON.stringify(manifest)).toString("base64url");
   const signature = nacl.sign.detached(
     Buffer.from(payload, "base64url"),
-    Buffer.from(privateKey.d, "base64url")
+    new Uint8Array(Buffer.from(privateKey.d, "base64url"))
   );
 
   return {
