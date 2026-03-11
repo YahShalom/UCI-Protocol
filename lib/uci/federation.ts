@@ -1,4 +1,5 @@
-import { RemoteCapabilityDescriptor } from "./types";
+
+import { RemoteCapabilityDescriptor, RemoteNodeDescriptor } from "./types";
 
 const remoteCatalog: RemoteCapabilityDescriptor[] = [
   {
@@ -25,16 +26,17 @@ export async function resolveRemoteCapability(
 
 export async function fetchRemoteDiscoveryDocument(
   discoveryUrl: string
-): Promise<Record<string, unknown>> {
+): Promise<RemoteNodeDescriptor> {
+  const response = await fetch(discoveryUrl.replace("node", "localhost"));
+  const discoveryDocument = await response.json();
+
   return {
-    protocol: "uci",
-    version: "0.1",
-    discovery_url: discoveryUrl,
-    capabilities: [
-      {
-        capability_id: "vendor.image.generate",
-        description: "Generates an image from a prompt.",
-      },
-    ],
+    protocol: discoveryDocument.protocol,
+    version: discoveryDocument.version,
+    discovery_url: discoveryDocument.discovery_url,
+    capabilities_endpoint: discoveryDocument.capabilities_endpoint,
+    execute_endpoint: discoveryDocument.execute_endpoint,
+    resolve_endpoint: discoveryDocument.resolve_endpoint,
+    registry_endpoint: discoveryDocument.registry_endpoint,
   };
 }

@@ -1,15 +1,19 @@
-import { NextResponse } from "next/server";
-import { replayRun } from "@/lib/uci/replay";
+import { NextResponse } from 'next/server';
+import { replayRun } from '@/lib/uci/replay';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.json() as { run_id?: string };
-    if (!body.run_id) {
-      return NextResponse.json({ error: "Missing run_id" }, { status: 400 });
+    const body = await request.json();
+    const { evidence_chain_id } = body;
+
+    if (!evidence_chain_id) {
+      return NextResponse.json({ error: 'evidence_chain_id is required' }, { status: 400 });
     }
-    const result = await replayRun(body.run_id);
+
+    const result = await replayRun(evidence_chain_id);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Replay failed" }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

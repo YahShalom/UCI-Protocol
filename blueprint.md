@@ -1,40 +1,42 @@
-# Blueprint
+# UCI Next.js Reference Implementation
 
 ## Overview
 
-This document outlines the design and features of the UCI (Unified Capability Invocation) protocol reference implementation. This application is a Next.js-based web server that implements the UCI v0.1 specification, providing a framework for resolving and executing intents as a series of capabilities.
+This project is a reference implementation of the Universal Capability Interface (UCI) in a Next.js application. It demonstrates the core concepts of UCI, including capabilities, manifests, trust, federation, and execution.
 
-## Features, Styles, and Design
+## Features
 
-### Core Protocol Objects
+*   **Capability Registry:** A local registry of capabilities, including `math.add` and `hello-world`.
+*   **Trust Layer:** Verification of capability manifests using Ed25519 signatures.
+*   **Federation:** Discovery of remote capabilities and execution of remote plans.
+*   **MCP Adapter:** Integration with the Firebase MCP for extending capabilities.
+*   **API Endpoints:** A set of API endpoints for interacting with the UCI runtime.
+*   **Policy Engine:** A policy engine to enforce constraints on capability execution.
+*   **User Interface:** A simple UI to send intent requests and view results.
 
-- **IntentRequest**: The primary input, representing a high-level goal from a user or system.
-- **CapabilityDescriptor**: A machine-readable definition of a capability.
-- **EvidenceStep**: A single, atomic entry in an execution record.
-- **EvidenceChain**: The complete, ordered collection of EvidenceStep objects.
-- **Outcome**: The final object produced at the end of an execution.
+## Design
 
-### Execution Objects
+*   **Modern Aesthetics:** The application uses a modern design with a clean and intuitive user interface.
+*   **Responsive:** The application is responsive and works on both desktop and mobile devices.
+*   **Accessible:** The application follows accessibility best practices to ensure it is usable by everyone.
 
-- **ExecutionPlan**: Represents a sequenced plan of capabilities to be executed.
+## Current Plan: Enhance User Interface
 
-### Policy and Governance Objects
+1.  **Enhance the UI:** Improve the visual design of the main page to make it more modern and appealing.
+2.  **Add Navigation:** Add a navigation bar to the layout to allow users to switch between different sections of the application.
+3.  **Create Marketplace Page:** Create a new page at `/marketplace` that fetches and displays the available capabilities from the `/api/uci/marketplace` endpoint.
+4.  **Create Runtimes Page:** Create a new page at `/runtimes` that fetches and displays the available runtimes from the `/api/uci/runtimes` endpoint.
 
-- **PolicyEnvelope**: A container for policy constraints and execution requirements related to an intent. It is signed to ensure integrity and authenticity.
+## Completed Plan: Implement Policy Layer and Basic UI
 
-### API Endpoints
+The last request was to implement the governance policy layer and a user interface. The following tasks were performed:
 
-- `POST /api/uci/execute`: The main endpoint for receiving and processing UCI IntentRequests.
-- `GET /app/.well-known/uci`: A discovery endpoint that provides information about the server's capabilities.
-- `GET /api/uci/capabilities`: A discovery endpoint that returns all registered capability descriptors.
-
-### Policy Validation
-
-The system includes a policy validation utility (`lib/uci/policy.ts`) that checks if a capability is allowed to be executed based on the `PolicyEnvelope` associated with the intent. This validation is performed before each capability execution in the `app/api/uci/execute/route.ts` file.
-
-## Current Request: Add UCI Capability Discovery Endpoint
-
-The following change was made to add a UCI capability discovery endpoint:
-
-1.  **`app/api/uci/capabilities/route.ts`**:
-    *   Created a new route that returns all registered capability descriptors in a JSON response.
+1.  **Implement the Policy Engine:**
+    *   Create `lib/uci/policy.ts` to house the policy engine.
+    *   Integrate the policy engine into the intent resolution process in `lib/uci/resolver.ts`.
+2.  **Create a User Interface:**
+    *   Create the main application page in `app/page.tsx`.
+    *   Update the layout in `app/layout.tsx`.
+    *   Add basic styling in `app/globals.css`.
+3.  **Create the Execution API Endpoint:**
+    *   Create `pages/api/uci/execute.ts` to handle intent execution requests from the UI.

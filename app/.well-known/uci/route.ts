@@ -1,22 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  return NextResponse.json({
-    protocol: "uci",
-    version: "0.1",
-    evidence_format: "uci-dag-v0",
-    manifests_endpoint: "/api/uci/manifests",
-    registry_endpoint: "/api/uci/registry",
-    replay_endpoint: "/api/uci/replay",
-    resolve_endpoint: "/api/uci/resolve",
-    federation_support: true,
-    remote_resolution_support: true,
-    capability_trust_support: true,
-    signed_manifests_support: true,
-    trust_verification_methods: [
-      "manual",
-      "domain_verification",
-      "cryptographic"
-    ]
-  });
+  const metadata = {
+    protocol_version: "0.1",
+    endpoints: {
+      execute: "/api/uci/execute",
+      resolve: "/api/uci/resolve",
+      registry: "/api/uci/registry",
+      manifests: "/api/uci/manifests",
+      discovery: "/.well-known/uci",
+      replay: "/api/uci/replay",
+      marketplace: "/api/uci/marketplace",
+      runtimes: "/api/uci/runtimes",
+    }
+  };
+
+  return NextResponse.json(metadata);
 }

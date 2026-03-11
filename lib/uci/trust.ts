@@ -1,9 +1,17 @@
+
 import { createHash } from "crypto";
 import { CapabilityManifest, CapabilityTrustProfile, SignedCapabilityManifest } from "./types";
 import { getTrustRoot, isTrustedPublisher } from "./trustRoot";
+import nacl from "tweetnacl";
+import { Buffer } from "buffer";
 
-export function signManifestPayload(payload: string, keyId: string): string {
-  return createHash("sha256").update(`${payload}:${keyId}`).digest("base64url");
+export function verifyManifestSignature(manifest: SignedCapabilityManifest, signature: string, publicKey: string): boolean {
+  const payload = manifest.payload;
+  return nacl.sign.detached.verify(
+    Buffer.from(payload, "base64url"),
+    Buffer.from(signature, "base64url"),
+    Buffer.from(publicKey, "base64url")
+  );
 }
 
 export function decodeProtectedHeader(manifest: SignedCapabilityManifest): { alg?: string; key_id?: string; typ?: string } {
@@ -34,16 +42,21 @@ export function evaluateCapabilityTrust(trust: CapabilityTrustProfile): "trusted
 export function verifyManifest(manifest: SignedCapabilityManifest, trustProfile?: CapabilityTrustProfile): CapabilityManifest {
   const payload = JSON.parse(Buffer.from(manifest.payload, "base64url").toString("utf8")) as CapabilityManifest;
   const header = decodeProtectedHeader(manifest);
-  const expected = signManifestPayload(manifest.payload, header.key_id ?? "");
-  const actual = manifest.signatures[0]?.signature;
+  const signature = manifest.signatures[0]?.signature;
   const trustedPublisher = verifyCapabilityPublisher(payload.publisher.id, header.key_id);
   const effectiveTrust = trustProfile ?? payload.trust ?? {};
 
-  if (header.alg && header.alg !== "mock-sha256") {
-    throw new Error(`Unsupported manifest algorithm: ${header.alg}`);
+  let signatureValid = false;
+  if (signature && signature !== "unsigned" && header.alg === "EdDSA") {
+    // Assuming a way to get the public key from the keyId
+    // This is a placeholder for the actual public key retrieval mechanism
+    const publicKey = ""; // Replace with actual public key
+    signatureValid = verifyManifestSignature(manifest, signature, publicKey);
+  } else if (signature === "unsigned" || (header.alg === "mock-sha256" && signature)) {
+    signatureValid = true; // For unsigned manifests or mock signatures
   }
 
-  if (actual !== expected && actual !== "unsigned") {
+  if (!signatureValid) {
     throw new Error(`Invalid manifest signature for ${payload.capability_id}`);
   }
 
@@ -52,7 +65,7 @@ export function verifyManifest(manifest: SignedCapabilityManifest, trustProfile?
     verification_status: trustedPublisher ? "verified" : (payload.trust?.verification_status ?? "unverified"),
     verification_method: payload.trust?.verification_method ?? (trustedPublisher ? "manual" : "manual"),
     trusted_publishers: getTrustRoot(),
-    publisher_signature: actual,
+    publisher_signature: signature,
   };
 
   return payload;

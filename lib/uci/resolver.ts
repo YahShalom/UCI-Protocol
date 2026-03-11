@@ -1,8 +1,16 @@
 import { ExecutionPlan, IntentRequest } from "./types";
 import { getCapability } from "./registry";
 import { resolveRemoteCapability } from "./federation";
+import { checkPolicy } from "./policy";
 
 export async function resolveIntent(intentRequest: IntentRequest): Promise<ExecutionPlan> {
+  if (intentRequest.policy) {
+    const policyDecision = checkPolicy(intentRequest, intentRequest.policy);
+    if (policyDecision.decision === "DENY") {
+      throw new Error(`Policy violation: ${policyDecision.reason}`);
+    }
+  }
+
   const local = await getCapability(intentRequest.capability_id);
 
   if (local) {
